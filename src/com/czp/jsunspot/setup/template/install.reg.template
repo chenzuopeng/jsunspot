@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+[HKEY_CLASSES_ROOT\.class]
+@="Class File"
+[HKEY_CLASSES_ROOT\JSunspot]
+@="Class File"
+[HKEY_CLASSES_ROOT\JSunspot\DefaultIcon]
+@="\"%1$s\\class.ico\""
+[HKEY_CLASSES_ROOT\JSunspot\shell]
+[HKEY_CLASSES_ROOT\JSunspot\shell\open]
+[HKEY_CLASSES_ROOT\JSunspot\shell\open\command]
+@="\"%1$s\\JSunspot.exe\" \"%%1\""
+
+[HKEY_CLASSES_ROOT\Directory\shell\JSunspot]
+[HKEY_CLASSES_ROOT\Directory\shell\JSunspot\command]
+@="\"%1$s\\JSunspot.exe\" \"%%1\""

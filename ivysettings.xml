@@ -1,0 +1,38 @@
+<ivysettings>
+	<settings defaultResolver="main" />
+	<caches defaultCacheDir="D:/Ivy/cache" />
+
+	<namespaces>
+		<namespace name="maven2">
+			<rule> <!-- 转换 org.apache.commons -->
+				<fromsystem>
+					<src org="org.apache.commons" module=".+" />
+					<dest org="$m0" module="$m0" />
+				</fromsystem>
+				<tosystem>
+					<src org="commons-.+" module="commons-.+" />
+					<dest org="org.apache.commons" module="$m0" />
+				</tosystem>
+			</rule>
+		</namespace>
+	</namespaces>
+
+	<resolvers>
+		<chain name="main">
+			<filesystem name="local">
+				<artifact
+					pattern="D:/Ivy/repository/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy
+					pattern="D:/Ivy/repository/[organisation]/[module]/[revision]/ivy-[revision].xml" />
+			</filesystem>
+			<packager name="ivyroundup" buildRoot="D:/Ivy/packager/build"
+				resourceCache="D:/Ivy/packager/cache">
+				<ivy
+					pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/ivy.xml" />
+				<artifact
+					pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/packager.xml" />
+			</packager>
+			<ibiblio name="maven2" m2compatible="true" namespace="maven2" />
+		</chain>
+	</resolvers>
+</ivysettings>

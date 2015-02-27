@@ -1,0 +1,81 @@
+<project default="build" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+	
+	<!-- 载入配置文件-->
+	<property file="build.properties" />
+	
+	<!-- 编译时依赖的第三方库存放路径 -->
+	<path id="compile.depends.lib.path">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<!--初始化-->
+	<target name="init">
+	   <delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="resolve" depends="init">
+		<ivy:settings file="ivysettings.xml" />
+		<ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" type="jar"/>
+	</target>
+	
+	<!-- 编译 -->
+    <target name="compile" depends="resolve">
+       <mkdir dir="${classes.dir}"/>
+       <javac debug="true" encoding="UTF-8" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="compile.depends.lib.path"/>
+    </target>
+	
+	<!-- 打包主程序  -->
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/${jar.filename}">
+			<fileset dir="${classes.dir}">
+			    <include name="**/*.class"/>
+			</fileset>
+			<fileset dir="${src.dir}">
+				<include name="**/template/**"/>
+			</fileset>
+			<fileset dir="${src.dir}">
+			    <include name="**/about.txt"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<property name="temp.file.name" value="${build.dir}/temp.zip"/>
+	<!-- 生成安装包 -->
+	<target name="temp">
+		<property name="lib" value="lib"/>
+		<property name="bin" value="bin"/>
+	    <zip destfile="${temp.file.name}">
+	       <zipfileset dir="${lib.dir}" prefix="${lib}"/>
+	       <zipfileset dir="${jar.dir}" prefix="${bin}"/>
+	       <zipfileset dir="${jad.dir}" prefix="${lib}"/>
+	       <zipfileset dir="${component.dir}">
+	           <include name="class.ico"/>
+	       </zipfileset>
+	    	<zipfileset dir="${help.dir}">
+	    	   <include name="Help.chm"/>
+	    	</zipfileset>
+	    </zip>
+		<unzip src="${temp.file.name}" dest="${temp.dir}"/>
+		<mkdir dir="${temp.dir}/jre"/>
+		<delete file="${temp.file.name}"/>
+	</target>
+	
+	<taskdef name="exe4j" classname="com.exe4j.Exe4JTask"/>
+	
+	<target name="exe4j" depends="temp">
+		<exe4j projectfile="${exe4j.dir}/jsunspot.exe4j"/>
+		<exe4j projectfile="${exe4j.dir}/setup.exe4j"/>
+		<exe4j projectfile="${exe4j.dir}/configuration.exe4j"/>
+	</target>
+	
+	<target name="artifact" depends="exe4j">
+		<zip destfile="${zip.name}">
+		    <zipfileset dir="${temp.dir}" prefix="${program.dir.name}"/>
+	    </zip>
+	</target>
+	
+	<target name="build" depends="jar,temp,exe4j,artifact"/>
+</project>
